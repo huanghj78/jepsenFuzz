@@ -1,0 +1,52 @@
+node_id=1                                     # 节点ID，高可用集群各节点标识
+node_name='node1'                             # 节点名称，高可用集群各节点名称，对应集群中 select * from pg_stat_replication; 中查到的 application_name
+conninfo='host=10.186.133.141 port=5432 user=repmgr dbname=repmgr connect_timeout=2'     # 集群中的所有服务器都必须能够使用此字符串连接到本地>节点
+data_directory='/usr/local/pgsql/data'             # pg数据目录
+replication_user='repmgr'                     # 流复制数据库用户，默认使用repmgr
+repmgr_bindir='/usr/local/pgsql/bin'    # repmgr软件目录
+pg_bindir='/usr/local/pgsql/bin'        # pg软件目录
+
+# 日志管理
+log_level=INFO
+log_file='/data/pglog/repmgr/repmgrd.log'      # log 文件需要提前创建
+log_status_interval=10                         # 此设置导致 repmgrd 以指定的时间间隔（以秒为单位，默认为 300）发出状态日志行，描述 repmgrd 的>当前状态，
+              # 例如：  [2021-09-28 17:51:15] [INFO] monitoring primary node "node1" (ID: 1) in normal state
+
+# pg、repmgr服务管理命令
+service_start_command='/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data start -o \'-c config_file=/usr/local/pgsql/data/postgresql.conf\' -l /data/pglog/start.log'
+service_stop_command='/usr/local/pgsql/bin/pg_ctl stop'
+service_restart_command='/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data restart -o \'-c config_file=/usr/local/pgsql/data/postgresql.conf\' -l /data/pglog/start.log'
+service_reload_command='su - postgres -c \'/usr/local/pgsql/bin/pg_ctl reload\' '
+
+repmgrd_pid_file='/tmp/repmgrd.pid'              # repmgrd 运行时的 pid 文件
+repmgrd_service_start_command='/usr/local/pgsql/bin/repmgrd -f /usr/local/pgsql/repmgr.conf start'
+repmgrd_service_stop_command='kill -9 `cat /tmp/repmgrd.pid`'
+
+# failover设置
+failover=automatic
+promote_command='/usr/local/pgsql/bin/repmgr -f /usr/local/pgsql/repmgr.conf standby promote  --log-to-file'        #当 repmgrd 确定当前节点将成为新的主节点时 ，将在故障转移情况下执行 promote_command 中定义的程序或脚本
+follow_command='/usr/local/pgsql/bin/repmgr -f /usr/local/pgsql/repmgr.conf  standby follow --log-to-file --upstream-node-id=%n'        # %n将被替换 repmgrd与新的主节点的ID， 如果没有提供， repmgr standby follow将尝试自行确定新的主repmgr standby follow节点，但如果在新主节点提升后原主节点重>新上线，则存在导致节点继续跟随原主节点的风险 。
+# 高可用参数设置
+location='location1'                # 定义节点位置的任意字符串,在故障转移期间用于检查当前主节点的可见性
+priority=100                        # 节点优先级，选主时可能使用到。（lsn > priority > node_id）
+                                    # 0 代表该节点不会被提升为主节点
+monitoring_history=yes              # 是否将监控数据写入“monitoring_history”表
+reconnect_interval=10               # 故障转移之前，尝试重新连接的间隔（以秒为单位）
+reconnect_attempts=6                # 故障转移之前，尝试重新连接的次数
+connection_check_type=ping          # ping: repmg 使用PQPing() 方法测试连接
+                                    # connection: 尝试与节点建立新的连接
+                                    # query: 通过现有连接在节点上执行 SQL 语句
+monitor_interval_secs=5             # 写入监控数据的间隔
+use_replication_slots=true
+# failover_validation_command=      # %n (node_id), %a (node_name)。
+                                    # 自定义脚本，以验证 repmgrd 做出的故障转移决策
+                                    # 此脚本必须返回退出代码 0 以指示节点应提升自身为主节点。
+
+
+/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data start -o '-c config_file=/usr/local/pgsql/data//postgresql.conf' -l /data/pglog/start.log
+
+PGPASSWORD=test1234 /usr/local/pgsql/bin/repmgr -f /usr/local/pgsql/repmgr.conf --upstream-node-id=1 standby register
+
+/usr/local/pgsql/bin/repmgrd -f /usr/local/pgsql/repmgr.conf start
+
+/usr/local/pgsql/bin/repmgr -f /usr/local/pgsql/repmgr.conf witness register -h 10.186.133.141
