@@ -128,7 +128,7 @@ func (c *bankCase) SetUp(ctx context.Context, _ []cluster.Node, clientNodes []cl
 	addressesStr := strings.Join(addresses, ",")
 
 	// 构建最终的 DSN
-	dsn := fmt.Sprintf("postgres://testuser:Chen0031@%s/test?sslmode=disable&target_session_attrs=read-write", addressesStr)
+	dsn := fmt.Sprintf("postgres://testuser:test@123@%s/test?sslmode=disable&target_session_attrs=read-write", addressesStr)
 	// dsn := fmt.Sprintf("postgres://testuser:Chen0031@%s/test?sslmode=disable&loggerLevel=debug&target_session_attrs=read-write", addressesStr)
 
 	db, err := sql.Open("opengauss", dsn)
