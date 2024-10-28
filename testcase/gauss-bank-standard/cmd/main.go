@@ -36,6 +36,7 @@ func main() {
 		RunTime:     fixture.Context.RunTime,
 		RunRound:    1,
 		DB:          "openGauss",
+		History:     "history.log",
 	}
 	gaussConfig := gauss.Config{
 		EnableLongTxn:       *longTxn,
