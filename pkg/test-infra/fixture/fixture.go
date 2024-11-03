@@ -168,7 +168,7 @@ func printVersion() {
 
 func init() {
 	printVersion()
-	flag.IntVar(&Context.ClientCount, "client", 5, "client count")
+	flag.IntVar(&Context.ClientCount, "client", 1, "client count")
 	// (TODO:yeya24) Now nemesis option is only for one TiDBCluster. If we want to add nemesis in AB Test,
 	// we can add another option for ClusterB.
 	flag.StringVar(&Context.Nemesis, "nemesis", "", "nemesis, separated by name, like random_kill,all_kill")

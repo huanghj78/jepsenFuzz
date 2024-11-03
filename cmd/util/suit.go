@@ -16,6 +16,7 @@ import (
 	"github.com/huanghj78/jepsenFuzz/pkg/core"
 	"github.com/huanghj78/jepsenFuzz/pkg/history"
 	"github.com/huanghj78/jepsenFuzz/pkg/logs"
+	"github.com/huanghj78/jepsenFuzz/pkg/nemesis"
 	"github.com/huanghj78/jepsenFuzz/pkg/verify"
 	"github.com/ngaut/log"
 )
@@ -300,6 +301,12 @@ func ParseNemesisGenerators(names string) (nemesisGens []core.NemesisGenerator) 
 }
 
 func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
+	switch name {
+	case "random_kill", "all_kill", "minor_kill", "major_kill":
+		g = nemesis.NewKillGenerator(name)
+	default:
+		// 	log.Fatalf("invalid nemesis generator %s", name)
+	}
 	// switch name {
 	// case "random_kill", "all_kill", "minor_kill", "major_kill",
 	// 	"kill_tikv_1node_5min", "kill_tikv_2node_5min",

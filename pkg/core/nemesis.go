@@ -14,6 +14,7 @@ import (
 type ChaosKind string
 
 const (
+	ProcKill ChaosKind = "proc-kill"
 	// PodFailure Applies pod failure
 	PodFailure ChaosKind = "pod-failure"
 	// PodKill will random kill a pod, this will make the Node be illegal

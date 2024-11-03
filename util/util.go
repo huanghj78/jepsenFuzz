@@ -14,6 +14,7 @@
 package util
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"fmt"
@@ -257,4 +258,23 @@ func SetAndWaitTiFlashReplica(ctx context.Context, db *sql.DB, dbName, tableName
 		return errors.Errorf("wait TiFlash replica of %s.%s error after %d seconds: %v", dbName, tableName, retryCount, err)
 	}
 	return nil
+}
+
+// ExecuteRemoteCommand 使用 sshpass 通过 SSH 执行远程命令
+func ExecuteRemoteCommand(ip, username, password, command string) (string, error) {
+	// 构建 sshpass 命令
+	sshCommand := []string{"sshpass", "-p", password, "ssh", fmt.Sprintf("%s@%s", username, ip), command}
+
+	// 执行命令
+	cmd := exec.Command(sshCommand[0], sshCommand[1:]...)
+
+	var out, errOut bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errOut
+
+	if err := cmd.Run(); err != nil {
+		return out.String(), fmt.Errorf("error executing command: %s", errOut.String())
+	}
+
+	return out.String(), nil
 }

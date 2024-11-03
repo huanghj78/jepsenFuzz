@@ -22,7 +22,7 @@ type DockerClusterProvider struct {
 func (d *DockerClusterProvider) SetUp(ctx context.Context, _ Specs) ([]Node, []ClientNode, error) {
 	var nodes []Node
 	var clientNode []ClientNode
-	for _, node := range d.DBs {
+	for i, node := range d.DBs {
 		addr := strings.Split(node, ":")
 		if len(addr) != 2 {
 			log.Fatalf("expect format ip:port, got %s", addr)
@@ -32,7 +32,7 @@ func (d *DockerClusterProvider) SetUp(ctx context.Context, _ Specs) ([]Node, []C
 		if err != nil {
 			log.Fatalf("illegal port %s", addr[1])
 		}
-		nodes = append(nodes, Node{IP: ip, Port: int32(port)})
+		nodes = append(nodes, Node{IP: ip, Port: int32(port), ID: int32(i + 1)})
 		clientNode = append(clientNode, ClientNode{IP: ip, Port: int32(port)})
 	}
 	return nodes, clientNode, nil

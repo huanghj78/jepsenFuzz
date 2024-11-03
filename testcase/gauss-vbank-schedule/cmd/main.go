@@ -24,6 +24,8 @@ var (
 	connParams    = flag.String("conn_params", "", "connection parameters")
 )
 
+// ./bin/vbank -node-addr 10.10.3.0:26000  -node-addr 10.10.4.26:26000 -node-addr 10.10.3.76:26000 -node-addr 10.10.1.9:26000 -node-addr 10.10.1.174:26000 -nemesis proc-kill
+
 func main() {
 	flag.Parse()
 

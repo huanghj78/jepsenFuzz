@@ -25,6 +25,7 @@ type Node struct {
 	PodName   string    // Pod's name
 	IP        string
 	Port      int32
+	ID        int32
 	*Client   `json:"-"`
 }
 
