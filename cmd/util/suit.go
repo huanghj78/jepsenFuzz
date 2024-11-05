@@ -304,6 +304,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 	switch name {
 	case "random_kill", "all_kill", "minor_kill", "major_kill":
 		g = nemesis.NewKillGenerator(name)
+	case "small_skews", "subcritical_skews", "critical_skews", "big_skews", "huge_skews", "strobe_skews":
+		g = nemesis.NewTimeChaos(name)
 	default:
 		// 	log.Fatalf("invalid nemesis generator %s", name)
 	}

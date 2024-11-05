@@ -21,4 +21,5 @@ func shuffleIndices(n int) []int {
 
 func init() {
 	core.RegisterNemesis(kill{})
+	core.RegisterNemesis(timeChaos{FaultIdMap: make(map[string]string)})
 }
