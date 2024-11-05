@@ -304,6 +304,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 	switch name {
 	case "random_kill", "all_kill", "minor_kill", "major_kill":
 		g = nemesis.NewKillGenerator(name)
+	case "partition", "two_partition", "multi_partition", "all_partition":
+		g = nemesis.NewNetworkPartitionGenerator(name)
 	default:
 		// 	log.Fatalf("invalid nemesis generator %s", name)
 	}

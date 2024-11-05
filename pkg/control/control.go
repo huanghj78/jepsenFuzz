@@ -291,7 +291,7 @@ loop:
 		c.RLock()
 		gens := c.nemesisGenerators
 		c.RUnlock()
-
+		log.Debug("gens=", gens)
 		if !gens.HasNext() {
 			if !gens.Reset() {
 				time.Sleep(time.Second)

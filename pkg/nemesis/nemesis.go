@@ -21,4 +21,7 @@ func shuffleIndices(n int) []int {
 
 func init() {
 	core.RegisterNemesis(kill{})
+	core.RegisterNemesis(networkPartition{
+		NodeIdMap: make(map[string]string),
+	})
 }
