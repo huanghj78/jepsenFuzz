@@ -1,4 +1,4 @@
 bin
 */bin/**
-/testcase/*/*.history
 /testcase/*/*.log
+/testcase/*/*.log.*
