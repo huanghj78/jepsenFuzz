@@ -306,6 +306,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 		g = nemesis.NewKillGenerator(name)
 	case "small_skews", "subcritical_skews", "critical_skews", "big_skews", "huge_skews", "strobe_skews":
 		g = nemesis.NewTimeChaos(name)
+	case "partition", "two_partition", "multi_partition", "all_partition":
+		g = nemesis.NewNetworkPartitionGenerator(name)
 	default:
 		// 	log.Fatalf("invalid nemesis generator %s", name)
 	}

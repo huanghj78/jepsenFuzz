@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"os"
+
+	"github.com/ngaut/log"
 
 	"github.com/huanghj78/jepsenFuzz/cmd/util"
 	logs "github.com/huanghj78/jepsenFuzz/logsearch/pkg/logs"
@@ -28,6 +31,13 @@ var (
 
 func main() {
 	flag.Parse()
+
+	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(logFile)
+	defer logFile.Close()
 
 	cfg := control.Config{
 		Mode:         control.ModeOnSchedule,
