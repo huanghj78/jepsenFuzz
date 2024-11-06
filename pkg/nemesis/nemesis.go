@@ -23,6 +23,9 @@ func init() {
 	core.RegisterNemesis(kill{})
 	core.RegisterNemesis(timeChaos{FaultIdMap: make(map[string]string)})
 	core.RegisterNemesis(networkPartition{
-		NodeIdMap: make(map[string]string),
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(cpuFullload{
+		FaultIdMap: make(map[string]string),
 	})
 }

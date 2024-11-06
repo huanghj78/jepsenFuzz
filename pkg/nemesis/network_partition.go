@@ -96,7 +96,7 @@ func NewNetworkPartitionGenerator(name string) core.NemesisGenerator {
 
 // networkPartition implements Nemesis
 type networkPartition struct {
-	NodeIdMap map[string]string
+	FaultIdMap map[string]string
 }
 
 func (n networkPartition) Invoke(ctx context.Context, node *cluster.Node, args ...interface{}) error {
@@ -108,7 +108,7 @@ func (n networkPartition) Invoke(ctx context.Context, node *cluster.Node, args .
 	}
 	destinationIPStr := strings.Join(destinationIPs, ",")
 	var result map[string]interface{}
-	cmd := fmt.Sprintf("/root/chaosblade-1.3.0/blade create network loss --percent 100 --interface eth0 --timeout 300 --destination-ip %s", destinationIPStr)
+	cmd := fmt.Sprintf("blade create network loss --percent 100 --interface eth0 --timeout 300 --destination-ip %s", destinationIPStr)
 	log.Debug("cmd=", cmd)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
 	if err != nil {
@@ -122,8 +122,7 @@ func (n networkPartition) Invoke(ctx context.Context, node *cluster.Node, args .
 		log.Errorf("Error unmarshalling JSON: %v", err)
 	}
 	log.Debug(result)
-	n.NodeIdMap[node.IP], _ = result["result"].(string)
-	// log.Debug("key=", srcNode.IP+"-"+dstNode.IP)
+	n.FaultIdMap[node.IP], _ = result["result"].(string)
 	log.Debug("id=", result["result"].(string))
 	return nil
 }
@@ -131,10 +130,10 @@ func (n networkPartition) Invoke(ctx context.Context, node *cluster.Node, args .
 func (n networkPartition) Recover(ctx context.Context, node *cluster.Node, args ...interface{}) error {
 	// srcNode, dstNode := extractArgs(args...)
 	log.Infof("recover network partition between node%d", node.ID)
-	id := n.NodeIdMap[node.IP]
+	id := n.FaultIdMap[node.IP]
 	// log.Debug("key=", srcNode.IP+"-"+dstNode.IP)
 	log.Debug("id=", id)
-	cmd := fmt.Sprintf("/root/chaosblade-1.3.0/blade destroy %s", id)
+	cmd := fmt.Sprintf("blade destroy %s", id)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
 	jsonOutput := strings.TrimSpace(output)
 	var result map[string]interface{}
@@ -144,7 +143,7 @@ func (n networkPartition) Recover(ctx context.Context, node *cluster.Node, args 
 		log.Errorf("Error unmarshalling JSON: %v", err)
 	}
 	log.Debug(result)
-	// delete(n.NodeIdMap, srcNode.IP+"-"+dstNode.IP)
+	delete(n.FaultIdMap, id)
 	log.Info(output)
 	return nil
 }

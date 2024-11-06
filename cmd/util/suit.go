@@ -308,8 +308,10 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 		g = nemesis.NewTimeChaos(name)
 	case "partition", "two_partition", "multi_partition", "all_partition":
 		g = nemesis.NewNetworkPartitionGenerator(name)
+	case "random_cpufl", "all_cpufl", "major_cpufl", "minor_cpufl":
+		g = nemesis.NewCPUFullloadGenerator(name)
 	default:
-		// 	log.Fatalf("invalid nemesis generator %s", name)
+		log.Fatalf("invalid nemesis generator %s", name)
 	}
 	// switch name {
 	// case "random_kill", "all_kill", "minor_kill", "major_kill",
