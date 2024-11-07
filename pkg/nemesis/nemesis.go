@@ -6,6 +6,10 @@ import (
 	"github.com/huanghj78/jepsenFuzz/pkg/core"
 )
 
+const (
+	Timeout = 300
+)
+
 func shuffleIndices(n int) []int {
 	indices := make([]int, n)
 	for i := 0; i < n; i++ {
@@ -23,7 +27,19 @@ func init() {
 	core.RegisterNemesis(kill{})
 	core.RegisterNemesis(timeChaos{FaultIdMap: make(map[string]string)})
 	core.RegisterNemesis(networkPartition{
-		NodeIdMap: make(map[string]string),
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(cpuFullLoad{
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(diskBurn{
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(diskFill{
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(memFullLoad{
+		FaultIdMap: make(map[string]string),
 	})
 	core.RegisterNemesis(netem{})
 }

@@ -32,7 +32,11 @@ const (
 	// PDLeaderShuffler will randomly shuffle pds.
 	PDLeaderShuffler ChaosKind = "pd-leader-shuffler"
 	// Scaling scales cluster
-	Scaling ChaosKind = "scaling"
+	Scaling     ChaosKind = "scaling"
+	CPUFullLoad ChaosKind = "cpu-fullload"
+	DiskBurn    ChaosKind = "disk-burn"
+	DiskFill    ChaosKind = "disk-fill"
+	MemFullLoad ChaosKind = "mem-fullload"
 )
 
 // Nemesis injects failure and disturbs the database.
