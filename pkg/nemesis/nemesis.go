@@ -25,4 +25,5 @@ func init() {
 	core.RegisterNemesis(networkPartition{
 		NodeIdMap: make(map[string]string),
 	})
+	core.RegisterNemesis(netem{})
 }

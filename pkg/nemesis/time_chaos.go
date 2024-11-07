@@ -152,7 +152,7 @@ func (t timeChaos) Invoke(ctx context.Context, node *cluster.Node, args ...inter
 	log.Infof("apply nemesis %s on node %s", core.TimeChaos, node.IP)
 
 	cmd := fmt.Sprintf("blade create time travel --offset %s", offset)
-	// 这里需要vim ~/.bash_profile，添加export PATH="$PATH:/usr/local/bin/chaosblade-1.7.4"（对应的位置）并source ~/.bashrc
+	// 这里需要vim ~/.bashrc，添加export PATH="$PATH:/usr/local/bin/chaosblade-1.7.4"（对应的位置）并source ~/.bashrc
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "centos", cmd)
 
 	var result map[string]interface{}
@@ -178,6 +178,7 @@ func (t timeChaos) Recover(ctx context.Context, node *cluster.Node, args ...inte
 	log.Infof("unapply nemesis %s on node %s", core.TimeChaos, node.IP)
 
 	faultId := t.FaultIdMap[node.IP]
+	delete(t.FaultIdMap, faultId)
 
 	cmd := fmt.Sprintf("blade destroy %s", faultId)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "centos", cmd)

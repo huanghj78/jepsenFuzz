@@ -308,6 +308,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 		g = nemesis.NewTimeChaos(name)
 	case "partition", "two_partition", "multi_partition", "all_partition":
 		g = nemesis.NewNetworkPartitionGenerator(name)
+	case "loss", "delay", "duplicate", "corrupt":
+		g = nemesis.NewNetemChaos(name)
 	default:
 		// 	log.Fatalf("invalid nemesis generator %s", name)
 	}
