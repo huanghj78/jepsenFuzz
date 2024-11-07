@@ -38,7 +38,7 @@ func (g networkPartitionGenerator) Generate(nodes []cluster.Node) []*core.Nemesi
 	default:
 		n = 1
 	}
-	return partitionNodes(nodes, n, time.Second*time.Duration(rand.Intn(10)+10))
+	return partitionNodes(nodes, n, time.Second*time.Duration(rand.Intn(10)+20))
 	// return partitionNodes(nodes, n, time.Second*time.Duration(rand.Intn(120)+60))
 }
 

@@ -35,4 +35,7 @@ func init() {
 	core.RegisterNemesis(diskBurn{
 		FaultIdMap: make(map[string]string),
 	})
+	core.RegisterNemesis(diskFill{
+		FaultIdMap: make(map[string]string),
+	})
 }

@@ -35,6 +35,7 @@ const (
 	Scaling     ChaosKind = "scaling"
 	CPUFullload ChaosKind = "cpu-fullload"
 	DiskBurn    ChaosKind = "disk-burn"
+	DiskFill    ChaosKind = "disk-fill"
 )
 
 // Nemesis injects failure and disturbs the database.

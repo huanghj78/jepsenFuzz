@@ -19,7 +19,7 @@ type killGenerator struct {
 func (g killGenerator) Generate(nodes []cluster.Node) []*core.NemesisOperation {
 	log.Info("=========================")
 	var n int
-	var duration = time.Second * time.Duration(rand.Intn(120)+60)
+	var duration = time.Second * time.Duration(rand.Intn(10)+10)
 	switch g.name {
 	case "minor_kill":
 		n = len(nodes)/2 - 1

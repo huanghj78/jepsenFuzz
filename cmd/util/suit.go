@@ -312,6 +312,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 		g = nemesis.NewCPUFullloadGenerator(name)
 	case "disk_burn":
 		g = nemesis.NewDiskBurnGenerator(name)
+	case "disk_fill":
+		g = nemesis.NewDiskFillGenerator(name)
 	default:
 		log.Fatalf("invalid nemesis generator %s", name)
 	}
