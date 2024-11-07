@@ -29,13 +29,16 @@ func init() {
 	core.RegisterNemesis(networkPartition{
 		FaultIdMap: make(map[string]string),
 	})
-	core.RegisterNemesis(cpuFullload{
+	core.RegisterNemesis(cpuFullLoad{
 		FaultIdMap: make(map[string]string),
 	})
 	core.RegisterNemesis(diskBurn{
 		FaultIdMap: make(map[string]string),
 	})
 	core.RegisterNemesis(diskFill{
+		FaultIdMap: make(map[string]string),
+	})
+	core.RegisterNemesis(memFullLoad{
 		FaultIdMap: make(map[string]string),
 	})
 }
