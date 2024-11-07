@@ -34,6 +34,7 @@ const (
 	// Scaling scales cluster
 	Scaling     ChaosKind = "scaling"
 	CPUFullload ChaosKind = "cpu-fullload"
+	DiskBurn    ChaosKind = "disk-burn"
 )
 
 // Nemesis injects failure and disturbs the database.

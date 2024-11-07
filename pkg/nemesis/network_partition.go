@@ -112,18 +112,16 @@ func (n networkPartition) Invoke(ctx context.Context, node *cluster.Node, args .
 	log.Debug("cmd=", cmd)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
 	if err != nil {
-		log.Error("===============", output)
+		log.Error("Execute command failed, err: %v, output: %s", err, output)
 		return err
 	}
 	jsonOutput := strings.TrimSpace(output)
 	err = json.Unmarshal([]byte(jsonOutput), &result)
 	if err != nil {
-		log.Error(jsonOutput)
-		log.Errorf("Error unmarshalling JSON: %v", err)
+		log.Errorf("Error unmarshalling JSON, err: %v, output", err, output)
+		return err
 	}
-	log.Debug(result)
 	n.FaultIdMap[node.IP], _ = result["result"].(string)
-	log.Debug("id=", result["result"].(string))
 	return nil
 }
 
@@ -135,12 +133,15 @@ func (n networkPartition) Recover(ctx context.Context, node *cluster.Node, args 
 	log.Debug("id=", id)
 	cmd := fmt.Sprintf("blade destroy %s", id)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
+	if err != nil {
+		log.Error("Execute command failed, err: %v, output: %s", err, output)
+		return err
+	}
 	jsonOutput := strings.TrimSpace(output)
 	var result map[string]interface{}
 	err = json.Unmarshal([]byte(jsonOutput), &result)
 	if err != nil {
-		log.Error(output)
-		log.Errorf("Error unmarshalling JSON: %v", err)
+		log.Errorf("Error unmarshalling JSON, err: %v, output", err, output)
 	}
 	log.Debug(result)
 	delete(n.FaultIdMap, id)
@@ -153,31 +154,6 @@ func (n networkPartition) Name() string {
 }
 
 func extractArgs(args ...interface{}) []cluster.Node {
-	// if len(args)!= 2 {
-	// 	log.Fatalf("expect two args, got %+v", args)
-	// }
-	// var srcNode, dstNode cluster.Node
-	// srcNode = args[0].(cluster.Node)
-	// dstNode = args[1].(cluster.Node)
-	// return srcNode, dstNode {
-	// var networkParts [][]cluster.Node
-	// var onePart []cluster.Node
-	// var anotherPart []cluster.Node
-
-	// for _, arg := range args {
-	// 	networkPart := arg.([]cluster.Node)
-	// 	networkParts = append(networkParts, networkPart)
-	// }
-
-	// if len(networkParts) != 2 {
-	// 	log.Fatalf("expect two network parts, got %+v", networkParts)
-	// }
-	// onePart = networkParts[0]
-	// anotherPart = networkParts[1]
-	// if len(onePart) < 1 || len(anotherPart) < 1 {
-	// 	log.Fatalf("expect non-empty two parts, got %+v and %+v", onePart, anotherPart)
-	// }
-	// return onePart, anotherPart
 	var anotherNodes []cluster.Node
 
 	if len(args) != 1 {

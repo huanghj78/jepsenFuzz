@@ -310,6 +310,8 @@ func parseNemesisGenerator(name string) (g core.NemesisGenerator) {
 		g = nemesis.NewNetworkPartitionGenerator(name)
 	case "random_cpufl", "all_cpufl", "major_cpufl", "minor_cpufl":
 		g = nemesis.NewCPUFullloadGenerator(name)
+	case "disk_burn":
+		g = nemesis.NewDiskBurnGenerator(name)
 	default:
 		log.Fatalf("invalid nemesis generator %s", name)
 	}

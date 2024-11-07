@@ -66,18 +66,20 @@ type cpuFullload struct {
 }
 
 func (c cpuFullload) Invoke(ctx context.Context, node *cluster.Node, args ...interface{}) error {
+	log.Infof("inject cpu fullload on node%d", node.ID)
 	percent, _ := args[0].(int)
 	cmd := fmt.Sprintf("blade create cpu load  --timeout 300 --cpu-percent %d", percent)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
 	if err != nil {
-		log.Error(output)
+		log.Error("Execute command failed, err: %v, output: %s", err, output)
 		return err
 	}
 	var result map[string]interface{}
 	jsonOutput := strings.TrimSpace(output)
 	err = json.Unmarshal([]byte(jsonOutput), &result)
 	if err != nil {
-		log.Errorf("Error unmarshalling JSON: %v", err)
+		log.Errorf("Error unmarshalling JSON, err: %v, output", err, output)
+		return err
 	}
 	c.FaultIdMap[node.IP], _ = result["result"].(string)
 	return nil
@@ -89,7 +91,7 @@ func (c cpuFullload) Recover(ctx context.Context, node *cluster.Node, args ...in
 	cmd := fmt.Sprintf("blade destroy %s", id)
 	output, err := util.ExecuteRemoteCommand(node.IP, "root", "ilovedds", cmd)
 	if err != nil {
-		log.Error(output)
+		log.Error("Execute command failed, err: %v, output: %s", err, output)
 		return err
 	}
 	delete(c.FaultIdMap, id)
