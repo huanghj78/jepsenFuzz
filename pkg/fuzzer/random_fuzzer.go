@@ -25,6 +25,10 @@ func (f *RandomFuzzer) Run(ctx context.Context) {
 	}
 }
 
+func (f *RandomFuzzer) Feedback() {
+
+}
+
 func NewRandomFuzzer(gens core.NemesisGenerators) *RandomFuzzer {
 	return &RandomFuzzer{
 		nemesisGenerators: gens,
