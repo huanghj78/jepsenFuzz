@@ -40,7 +40,7 @@ func main() {
 	defer logFile.Close()
 
 	cfg := control.Config{
-		Mode:         control.ModeOnSchedule,
+		Mode:         control.ModeFuzzing,
 		ClientCount:  fixture.Context.ClientCount,
 		RequestCount: fixture.Context.RequestCount,
 		RunRound:     fixture.Context.RunRound,

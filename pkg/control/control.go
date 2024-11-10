@@ -13,6 +13,7 @@ import (
 
 	"github.com/huanghj78/jepsenFuzz/pkg/cluster"
 	"github.com/huanghj78/jepsenFuzz/pkg/core"
+	"github.com/huanghj78/jepsenFuzz/pkg/fuzzer"
 	"github.com/huanghj78/jepsenFuzz/pkg/history"
 	"github.com/huanghj78/jepsenFuzz/pkg/logs"
 	"github.com/huanghj78/jepsenFuzz/pkg/verify"
@@ -96,6 +97,8 @@ func (c *Controller) Run() {
 		c.TransferControlToClient()
 	case ModeOnSchedule:
 		c.RunClientOnSchedule()
+	case ModeFuzzing:
+		c.RunFuzzing()
 	// case ModeNemesisSequential:
 	// 	c.RunWithNemesisSequential()
 	default:
@@ -107,6 +110,81 @@ func (c *Controller) setUpPlugin() {
 	for _, plugin := range c.plugins {
 		plugin.InitPlugin(c)
 	}
+}
+
+func (c *Controller) RunFuzzing() {
+	c.setUpDB()
+	c.setUpClient()
+	c.setUpPlugin()
+
+	nctx, ncancel := context.WithTimeout(c.ctx, c.cfg.RunTime*time.Duration(int64(c.cfg.RunRound)))
+	var fuzzerWg sync.WaitGroup
+	fuzzerWg.Add(1)
+	go func() {
+		defer fuzzerWg.Done()
+		randomFuzzer := fuzzer.NewRandomFuzzer(c.nemesisGenerators)
+		randomFuzzer.Run(nctx)
+	}()
+
+	var nemesisWg sync.WaitGroup
+	nemesisWg.Add(1)
+	go func() {
+		defer nemesisWg.Done()
+		c.dispatchNemesis(nctx)
+	}()
+
+ROUND:
+	for round := 1; round <= c.cfg.RunRound; round++ {
+		log.Infof("round %d start ...", round)
+
+		ctx, cancel := context.WithTimeout(c.ctx, c.cfg.RunTime)
+
+		historyFile := fmt.Sprintf("%s.%d", c.cfg.History, round)
+		recorder, err := history.NewRecorder(historyFile)
+		if err != nil {
+			log.Fatalf("prepare history failed %v", err)
+		}
+
+		if err := c.dumpState(ctx, recorder); err != nil {
+			log.Fatalf("dump state failed, %v", err)
+		}
+
+		// requestCount for the round, shared by all clients.
+		requestCount := int64(c.cfg.RequestCount)
+		proc := c.proc
+		log.Infof("total request count %d", requestCount)
+
+		n := len(c.cfg.ClientNodes)
+		var clientWg sync.WaitGroup
+		clientWg.Add(n)
+		for i := 0; i < n; i++ {
+			go func(i int) {
+				defer clientWg.Done()
+				c.clientRequestGenerator(ctx, c.clients[i].(core.OnScheduleClientExtensions), c.cfg.ClientNodes[i], &proc, &requestCount, recorder)
+			}(i)
+		}
+
+		clientWg.Wait()
+		cancel()
+
+		recorder.Close()
+		c.suit.Verify(historyFile)
+
+		select {
+		case <-c.ctx.Done():
+			log.Infof("finish test")
+			break ROUND
+		default:
+		}
+
+		log.Infof("round %d finish", round)
+	}
+
+	ncancel()
+	nemesisWg.Wait()
+
+	c.tearDownClient()
+	c.tearDownDB()
 }
 
 // RunClientOnSchedule runs workload round by round, with nemesis injected seamlessly

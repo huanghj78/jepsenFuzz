@@ -203,6 +203,9 @@ type NemesisGenerators interface {
 	HasNext() bool
 	// Reset resets iterator, return false if it cannot be reset
 	Reset() bool
+	// SetIdx set idx, return false if the idx cannot be set
+	SetIdx(idx int) bool
+	GetGensLen() int
 }
 
 // nemesisGenerators is a wrapper of []NemesisGenerator
@@ -226,6 +229,18 @@ func (i *nemesisGenerators) Next() NemesisGenerator {
 func (i *nemesisGenerators) Reset() bool {
 	i.idx = 0
 	return true
+}
+
+func (i *nemesisGenerators) SetIdx(idx int) bool {
+	if idx < 0 || idx >= len(i.generators) {
+		return false
+	}
+	i.idx = idx
+	return true
+}
+
+func (i *nemesisGenerators) GetGensLen() int {
+	return len(i.generators)
 }
 
 // NewNemesisGenerators ...
@@ -256,6 +271,14 @@ func (m *OneRoundNemesisGenerators) Next() NemesisGenerator {
 // Reset just returns false because we forbid reset for OneRoundNemesisGenerators
 func (m *OneRoundNemesisGenerators) Reset() bool {
 	return false
+}
+
+func (m *OneRoundNemesisGenerators) SetIdx(idx int) bool {
+	return false
+}
+
+func (m *OneRoundNemesisGenerators) GetGensLen() int {
+	return 1
 }
 
 // NewOneRoundNemesisGenerators ...

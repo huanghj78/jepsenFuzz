@@ -43,6 +43,7 @@ const (
 	ModeOnSchedule = iota
 	ModeStandard
 	ModeNemesisSequential
+	ModeFuzzing
 )
 
 func (m Mode) String() string {
