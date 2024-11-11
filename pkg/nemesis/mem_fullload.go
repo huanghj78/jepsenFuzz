@@ -28,7 +28,7 @@ func (g memFullLoadGenerator) Generate(nodes []cluster.Node) []*core.NemesisOper
 			Node:        &node,
 			InvokeArgs:  []interface{}{rand.Intn(10) + 80},
 			RecoverArgs: []interface{}{},
-			RunTime:     time.Second * time.Duration(rand.Intn(10)+20),
+			RunTime:     time.Second * time.Duration(rand.Intn(5)+1),
 		})
 	}
 

@@ -28,7 +28,7 @@ func (g diskFillGenerator) Generate(nodes []cluster.Node) []*core.NemesisOperati
 			Node:        &node,
 			InvokeArgs:  []interface{}{rand.Intn(10) + 80},
 			RecoverArgs: []interface{}{},
-			RunTime:     time.Second * time.Duration(rand.Intn(10)+20),
+			RunTime:     time.Second * time.Duration(rand.Intn(5)+1),
 		})
 	}
 

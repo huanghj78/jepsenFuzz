@@ -32,7 +32,7 @@ func (g cpuFullLoadGenerator) Generate(nodes []cluster.Node) []*core.NemesisOper
 	default:
 		n = 1
 	}
-	return cpuFullLoadNodes(nodes, n, time.Second*time.Duration(rand.Intn(10)+10), rand.Intn(10)+20)
+	return cpuFullLoadNodes(nodes, n, time.Second*time.Duration(rand.Intn(5)+1), rand.Intn(10)+80)
 }
 
 func (g cpuFullLoadGenerator) Name() string {

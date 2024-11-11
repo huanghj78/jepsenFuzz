@@ -28,7 +28,7 @@ func (g diskBurnGenerator) Generate(nodes []cluster.Node) []*core.NemesisOperati
 			Node:        &node,
 			InvokeArgs:  []interface{}{},
 			RecoverArgs: []interface{}{},
-			RunTime:     time.Second * time.Duration(rand.Intn(10)+20),
+			RunTime:     time.Second * time.Duration(rand.Intn(5)+1),
 		})
 	}
 
