@@ -38,7 +38,7 @@ dsn := fmt.Sprintf("postgres://数据库用户名:数据库用户密码@%s/test?
 随后即可回到testcase中的某个文件夹中，执行`make build`，生成二进制可执行文件，执行的一个例子如下：
 
 ```bash
-./bin/vbank -node-addr 10.10.3.0:26000  -node-addr 10.10.4.26:26000 -node-addr 10.10.3.76:26000 -node-addr 10.10.1.9:26000 -node-addr 10.10.1.174:26000 -nemesis proc-kill
+./bin/vbank -node-addr 10.10.3.0:26000  -node-addr 10.10.4.26:26000 -node-addr 10.10.3.76:26000 -node-addr 10.10.1.9:26000 -node-addr 10.10.1.174:26000 -nemesis random_kill
 ```
 
 
