@@ -10,7 +10,7 @@ JepsenFuzz目前仍在开发中……
 ## 依赖
 
 * [chaosblade](https://github.com/chaosblade-io/chaosblade) >= v1.7.4
-（需要在被测机器上安装，并进行vim ~/.bash_profile，添加export PATH="$PATH:/usr/local/bin/chaosblade-1.7.4"（对应的位置）并source ~/.bashrc使其生效）
+（需要在被测机器上安装，并进行vim ~/.bashrc，添加export PATH="$PATH:/usr/local/bin/chaosblade-1.7.4"（对应的位置）并source ~/.bashrc使其生效）
 
 
 ## 故障场景
