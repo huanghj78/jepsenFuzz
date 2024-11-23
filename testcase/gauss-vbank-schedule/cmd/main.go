@@ -9,6 +9,7 @@ import (
 
 	"github.com/huanghj78/jepsenFuzz/cmd/util"
 	logs "github.com/huanghj78/jepsenFuzz/logsearch/pkg/logs"
+	datachecker "github.com/huanghj78/jepsenFuzz/pkg/check/data_checker"
 	"github.com/huanghj78/jepsenFuzz/pkg/check/porcupine"
 	"github.com/huanghj78/jepsenFuzz/pkg/cluster"
 	"github.com/huanghj78/jepsenFuzz/pkg/control"
@@ -27,7 +28,7 @@ var (
 	connParams    = flag.String("conn_params", "", "connection parameters")
 )
 
-// ./bin/vbank -node-addr 10.10.3.0:26000  -node-addr 10.10.4.26:26000 -node-addr 10.10.3.76:26000 -node-addr 10.10.1.9:26000 -node-addr 10.10.1.174:26000 -nemesis proc-kill
+// ./bin/vbank -node-addr 10.10.3.0:26000  -node-addr 10.10.4.26:26000 -node-addr 10.10.3.76:26000 -node-addr 10.10.1.9:26000 -node-addr 10.10.1.174:26000 -nemesis random_kill
 
 func main() {
 	flag.Parse()
@@ -40,7 +41,7 @@ func main() {
 	defer logFile.Close()
 
 	cfg := control.Config{
-		Mode:         control.ModeFuzzing,
+		Mode:         control.ModeOnSchedule,
 		ClientCount:  fixture.Context.ClientCount,
 		RequestCount: fixture.Context.RequestCount,
 		RunRound:     fixture.Context.RunRound,
@@ -48,9 +49,16 @@ func main() {
 		History:      fixture.Context.HistoryFile,
 	}
 	verifySuit := verify.Suit{
-		Model:   &vbank.Model{},
-		Checker: core.MultiChecker("v_bank checkers", porcupine.Checker{}),
-		Parser:  &vbank.Parser{},
+		Model: &vbank.Model{},
+		Checker: core.MultiChecker("v_bank checkers", porcupine.Checker{}, datachecker.Checker{
+			Addresses: []string{
+				"10.10.3.0:26000", "10.10.4.26:26000", "10.10.3.76:26000", "10.10.1.9:26000", "10.10.1.174:26000",
+			},
+			Tables: []string{
+				"v_bank",
+			},
+		}),
+		Parser: &vbank.Parser{},
 	}
 	vbCfg := &vbank.Config{
 		PKType:        *pkType,
